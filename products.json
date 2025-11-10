@@ -1,0 +1,12 @@
+[
+  {
+    "name": "School Bag",
+    "price": 95,
+    "image": "https://placehold.co/300x200?text=School+Bag"
+  },
+  {
+    "name": "Textbook",
+    "price": 60,
+    "image": "https://placehold.co/300x200?text=Textbook"
+  }
+]

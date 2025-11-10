@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Manage Products</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #1e3a8a;
+    }
+    .form {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    input, textarea {
+      width: 100%;
+      margin-bottom: 0.8rem;
+      padding: 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    table, th, td {
+      border: 1px solid #cbd5e1;
+    }
+    th, td {
+      padding: 0.5rem;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel - Manage Products</h1>
+
+  <div class="form">
+    <h3>Add or Update Product</h3>
+    <input type="text" id="name" placeholder="Product Name" />
+    <input type="number" id="price" placeholder="Price (GHS)" />
+    <input type="text" id="image" placeholder="Image URL" />
+    <button onclick="addProduct()">Add Product</button>
+    <button onclick="downloadJSON()">Download JSON</button>
+  </div>
+
+  <table id="productTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price (GHS)</th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+
+    function renderTable() {
+      const tbody = document.querySelector('#productTable tbody');
+      tbody.innerHTML = products.map((p, i) => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.price}</td>
+          <td><img src="${p.image}" alt="${p.name}" width="60"></td>
+          <td><button onclick="deleteProduct(${i})">Delete</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function addProduct() {
+      const name = document.getElementById('name').value.trim();
+      const price = document.getElementById('price').value.trim();
+      const image = document.getElementById('image').value.trim();
+
+      if (!name || !price || !image) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      products.push({ name, price, image });
+      localStorage.setItem('products', JSON.stringify(products));
+      renderTable();
+      alert("Product added!");
+    }
+
+    function deleteProduct(index) {
+      if (confirm("Delete this product?")) {
+        products.splice(index, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderTable();
+      }
+    }
+
+    function downloadJSON() {
+      const blob = new Blob([JSON.stringify(products, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "products.json";
+      link.click();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
