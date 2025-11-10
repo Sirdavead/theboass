@@ -1,1 +1,127 @@
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart - The Academian</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f9;
+      margin: 0;
+    }
+
+    header {
+      background-color: #1a4f9b;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #e5e7eb;
+    }
+
+    .total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+
+    button {
+      background: #0d9488;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0f766e;
+    }
+
+    a {
+      color: #1a4f9b;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Shopping Cart</h1>
+  </header>
+
+  <div class="container">
+    <div id="cartItems"></div>
+    <div class="total" id="cartTotal"></div>
+    <button onclick="clearCart()">Clear Cart</button>
+    <a href="index.html" style="margin-left: 10px;">Continue Shopping</a>
+  </div>
+
+  <script>
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartDiv = document.getElementById('cartItems');
+      const totalDiv = document.getElementById('cartTotal');
+
+      if (cart.length === 0) {
+        cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+        totalDiv.textContent = "";
+        return;
+      }
+
+      let total = 0;
+      cartDiv.innerHTML = `
+        <table>
+          <tr><th>Product</th><th>Price (GHS)</th><th>Action</th></tr>
+          ${cart.map((item, i) => {
+            total += parseFloat(item.price);
+            return `<tr>
+              <td>${item.name}</td>
+              <td>${item.price}</td>
+              <td><button onclick="removeItem(${i})">Remove</button></td>
+            </tr>`;
+          }).join('')}
+        </table>
+      `;
+      totalDiv.textContent = "Total: GHS " + total.toFixed(2);
+    }
+
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart();
+    }
+
+    function clearCart() {
+      localStorage.removeItem('cart');
+      loadCart();
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>
